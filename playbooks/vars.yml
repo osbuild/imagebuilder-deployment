@@ -1,0 +1,18 @@
+# Variables for the imagebuilder deployment playbooks.
+
+base_packages:
+  - chrony
+  - dnf-plugins-core
+  - osbuild
+  - osbuild-composer
+  - tmux
+  - vim
+
+manager_packages:
+  - cockpit
+  - cockpit-composer
+  - composer-cli
+
+ebs_storage_device: /dev/nvme1n1
+
+osbuild_repo_baseurl: http://osbuild-composer-repos.s3-website.us-east-2.amazonaws.com/osbuild/osbuild-composer/master/latest/rhel83_x86_64

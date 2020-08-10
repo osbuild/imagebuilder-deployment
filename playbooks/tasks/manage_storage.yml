@@ -1,0 +1,30 @@
+---
+
+- name: Wait for EBS storage to connect
+  wait_for:
+    path: "{{ ebs_storage_device }}"
+    timeout: 300
+
+- name: Create XFS filesystem on EBS storage
+  command: mkfs.xfs "{{ ebs_storage_device }}"
+
+- name: Ensure osbuild-composer directory exists
+  file:
+    path: /var/lib/osbuild-composer
+    state: directory
+
+- name: Mount EBS volume
+  mount:
+    src: "{{ ebs_storage_device }}"
+    path: /var/lib/osbuild-composer
+    fstype: xfs
+    opts: defaults
+    state: mounted
+
+- name: Verify that the storage is writable
+  file:
+    path: /var/lib/osbuild-composer/.ansible_check
+    state: "{{ item }}"
+  loop:
+    - touch
+    - absent

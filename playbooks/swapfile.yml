@@ -1,0 +1,30 @@
+---
+
+- name: Create a swapfile
+  command: dd if=/dev/zero of=/swapfile bs=1M count=2048
+  when: not swapcheck.stat.exists
+
+- name: Set swapfile permissions
+  file:
+    path: /swapfile
+    owner: root
+    group: root
+    mode: "0600"
+  when: not swapcheck.stat.exists
+
+
+- name: Enable swap
+  command: "{{ item }}"
+  loop:
+    - mkswap /swapfile
+    - swapon /swapfile
+
+- name: Mount swap file in /etc/fstab
+  mount:
+    src: /swapfile
+    name: none
+    fstype: swap
+    opts: "sw,nofail"
+    dump: "0"
+    passno: "0"
+    state: present
