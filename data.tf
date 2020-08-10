@@ -1,4 +1,4 @@
-data "terraform_remote_state" "vpc" {
+data "terraform_remote_state" "terraform_cloud" {
   backend = "remote"
   config = {
     organization = "imagebuilder"
