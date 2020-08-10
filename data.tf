@@ -12,6 +12,6 @@ data "template_file" "worker_user_data" {
 
   vars = {
     manager_hostname = "manager.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
-    worker_hostname = "worker.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
+    worker_hostname  = "worker.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
   }
 }

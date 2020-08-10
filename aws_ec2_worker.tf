@@ -5,7 +5,7 @@ resource "aws_launch_template" "worker" {
   key_name      = "personal_servers"
   user_data     = base64encode(data.template_file.worker_user_data.rendered)
 
-  vpc_security_group_ids      = [
+  vpc_security_group_ids = [
     aws_security_group.worker.id,
     "sg-0bff440d29aa6992b"
   ]
@@ -42,12 +42,12 @@ resource "aws_launch_template" "worker" {
 
 resource "aws_spot_fleet_request" "worker" {
   allocation_strategy = "lowestPrice"
-  fleet_type = "maintain"
-  iam_fleet_role  = "arn:aws:iam::438669297788:role/aws-ec2-spot-fleet-tagging-role"
+  fleet_type          = "maintain"
+  iam_fleet_role      = "arn:aws:iam::438669297788:role/aws-ec2-spot-fleet-tagging-role"
   iam_instance_profile {
     name = "imagebuilder-instance-roles"
   }
-  target_capacity = 1
+  target_capacity                     = 1
   terminate_instances_with_expiration = true
 
   launch_template_config {
@@ -57,39 +57,39 @@ resource "aws_spot_fleet_request" "worker" {
     }
     overrides {
       instance_type = "t3.medium"
-      subnet_id = aws_subnet.us-east-2a.id
+      subnet_id     = aws_subnet.us-east-2a.id
     }
     overrides {
       instance_type = "t3.medium"
-      subnet_id = aws_subnet.us-east-2b.id
+      subnet_id     = aws_subnet.us-east-2b.id
     }
     overrides {
       instance_type = "t3.medium"
-      subnet_id = aws_subnet.us-east-2c.id
+      subnet_id     = aws_subnet.us-east-2c.id
     }
     overrides {
       instance_type = "t3.large"
-      subnet_id = aws_subnet.us-east-2a.id
+      subnet_id     = aws_subnet.us-east-2a.id
     }
     overrides {
       instance_type = "t3.large"
-      subnet_id = aws_subnet.us-east-2b.id
+      subnet_id     = aws_subnet.us-east-2b.id
     }
     overrides {
       instance_type = "t3.large"
-      subnet_id = aws_subnet.us-east-2c.id
+      subnet_id     = aws_subnet.us-east-2c.id
     }
     overrides {
       instance_type = "c5.large"
-      subnet_id = aws_subnet.us-east-2a.id
+      subnet_id     = aws_subnet.us-east-2a.id
     }
     overrides {
       instance_type = "c5.large"
-      subnet_id = aws_subnet.us-east-2b.id
+      subnet_id     = aws_subnet.us-east-2b.id
     }
     overrides {
       instance_type = "c5.large"
-      subnet_id = aws_subnet.us-east-2c.id
+      subnet_id     = aws_subnet.us-east-2c.id
     }
   }
 
