@@ -25,9 +25,7 @@ data "template_file" "manager_user_data" {
 resource "aws_instance" "manager" {
   ami           = data.aws_ami.rhel8-cloudaccess.id
   instance_type = "t3.small"
-  iam_instance_profile {
-    name = "imagebuilder-instance-roles"
-  }
+  iam_instance_profile = "imagebuilder-instance-roles"
   key_name  = "personal_servers"
   subnet_id = aws_subnet.us-east-2a.id
   vpc_security_group_ids = [

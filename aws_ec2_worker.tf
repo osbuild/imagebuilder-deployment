@@ -3,6 +3,9 @@ resource "aws_launch_template" "worker" {
   image_id      = data.aws_ami.rhel8-cloudaccess.id
   instance_type = "t3.medium"
   key_name      = "personal_servers"
+  iam_instance_profile {
+    name = "imagebuilder-instance-roles"
+  }
   user_data     = base64encode(data.template_file.worker_user_data.rendered)
 
   vpc_security_group_ids = [
@@ -44,9 +47,6 @@ resource "aws_spot_fleet_request" "worker" {
   allocation_strategy = "lowestPrice"
   fleet_type          = "maintain"
   iam_fleet_role      = "arn:aws:iam::438669297788:role/aws-ec2-spot-fleet-tagging-role"
-  iam_instance_profile {
-    name = "imagebuilder-instance-roles"
-  }
   target_capacity                     = 1
   terminate_instances_with_expiration = true
 
