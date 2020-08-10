@@ -1,3 +1,13 @@
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  backend "s3" {
+    bucket = "imagebuilder-terraform"
+    key    = "terraform.state"
+    region = "us-east-2"
+  }
+}
+
+
 data "aws_ami" "rhel8-cloudaccess" {
   owners = ["309956199498"]
 
