@@ -1,3 +1,13 @@
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+  config = {
+    organization = "imagebuilder"
+    workspaces = {
+      name = "imagebuilder-deployment"
+    }
+  }
+}
+
 data "aws_ami" "rhel8-cloudaccess" {
   owners = ["309956199498"]
 
