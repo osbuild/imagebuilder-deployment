@@ -14,8 +14,8 @@
         password_lock: yes
 
     - name: Set up passwordless sudo for the redhat user
-      file:
-        path: /etc/sudoers.d/redhat
+      copy:
+        dest: /etc/sudoers.d/redhat
         content: |
           # Managed by Ansible
           redhat ALL=(ALL) NOPASSWD:ALL
@@ -52,17 +52,6 @@
       timezone:
         name: UTC
         hwclock: UTC
-
-    - name: Check if a swapfile already exists
-      stat:
-        path: /swapfile
-        get_attributes: no
-        get_checksum: no
-        get_mime: no
-      register: swapcheck
-
-    - include_tasks: tasks/swapfile.yml
-      when: not swapcheck.stat.exists
 
     - include_tasks: tasks/packages.yml
 
@@ -112,3 +101,14 @@
         enabled: yes
       when:
         - node_type == 'worker'
+
+    - name: Check if a swapfile already exists
+      stat:
+        path: /swapfile
+        get_attributes: no
+        get_checksum: no
+        get_mime: no
+      register: swapcheck
+
+    - include_tasks: tasks/swapfile.yml
+      when: not swapcheck.stat.exists
