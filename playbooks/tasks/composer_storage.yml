@@ -5,8 +5,14 @@
     path: "{{ ebs_storage_device }}"
     timeout: 300
 
+- name: Check for XFS filesystem on EBS storage
+  command: "xfs_info {{ ebs_storage_device }}"
+  failed_when: no
+  register: filesystem_check
+
 - name: Create XFS filesystem on EBS storage
   command: mkfs.xfs "{{ ebs_storage_device }}"
+  when: filesystem_check.rc != 0
 
 - name: Ensure osbuild-composer directory exists
   file:
