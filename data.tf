@@ -7,11 +7,27 @@ data "aws_ami" "rhel8-cloudaccess" {
   }
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+data "template_file" "composer_user_data" {
+  template = "${file("userdata/composer.tpl")}"
+
+  vars = {
+    composer_hostname = "composer.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
+  }
+}
+
+# data "aws_subnet_ids" "subnets" {
+#   vpc_id = aws_vpc.main.id
+# }
+
 data "template_file" "worker_user_data" {
   template = "${file("userdata/worker.tpl")}"
 
   vars = {
-    manager_hostname = "manager.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
+    composer_hostname = "composer.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
     worker_hostname  = "worker.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
   }
 }

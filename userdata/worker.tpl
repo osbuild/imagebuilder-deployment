@@ -3,7 +3,7 @@ set -euxo pipefail
 
 hostnamectl set-hostname ${worker_hostname}
 
-echo ${manager_hostname} | tee /etc/osbuild-composer/manager_hostname
+echo ${composer_hostname} | tee /etc/osbuild-composer/composer_hostname
 
 dnf -y install git python3-pip
 pip3 install ansible

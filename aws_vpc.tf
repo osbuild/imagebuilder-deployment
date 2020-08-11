@@ -18,36 +18,17 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.main.id
 }
 
-resource "aws_subnet" "us-east-2a" {
+
+resource "aws_subnet" "subnets" {
+  count = length(data.aws_availability_zones.available.names)
+
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "us-east-2a"
-  cidr_block              = "10.0.1.0/24"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  cidr_block              = "10.0.${count.index}.0/24"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "imagebuilder.${var.deployment_name}.us-east-2a"
-  }
-}
-
-resource "aws_subnet" "us-east-2b" {
-  vpc_id                  = aws_vpc.main.id
-  availability_zone       = "us-east-2b"
-  cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "imagebuilder.${var.deployment_name}.us-east-2b"
-  }
-}
-
-resource "aws_subnet" "us-east-2c" {
-  vpc_id                  = aws_vpc.main.id
-  availability_zone       = "us-east-2c"
-  cidr_block              = "10.0.3.0/24"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "imagebuilder.${var.deployment_name}.us-east-2c"
+    Name = "imagebuilder.${var.deployment_name}.${data.aws_availability_zones.available.names[count.index]}"
   }
 }
 
@@ -61,9 +42,9 @@ resource "aws_vpc_endpoint" "s3" {
   }
 }
 
-resource "aws_security_group" "manager" {
-  name        = "imagebuilder.${var.deployment_name}.manager"
-  description = "Manager tier security group"
+resource "aws_security_group" "composer" {
+  name        = "imagebuilder.${var.deployment_name}.composer"
+  description = "composer tier security group"
   vpc_id      = aws_vpc.main.id
 
   // From: https://search.arin.net/rdap/?query=REDHAT-1
@@ -133,7 +114,7 @@ resource "aws_security_group" "manager" {
   }
 
   tags = {
-    Name = "imagebuilder.${var.deployment_name}.manager"
+    Name = "imagebuilder.${var.deployment_name}.composer"
   }
 }
 
@@ -201,6 +182,6 @@ resource "aws_security_group" "worker" {
   }
 
   tags = {
-    Name = "imagebuilder.${var.deployment_name}.manager"
+    Name = "imagebuilder.${var.deployment_name}.composer"
   }
 }

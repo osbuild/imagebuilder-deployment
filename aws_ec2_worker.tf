@@ -54,42 +54,52 @@ resource "aws_spot_fleet_request" "worker" {
       id      = aws_launch_template.worker.id
       version = aws_launch_template.worker.latest_version
     }
-    overrides {
-      instance_type = "t3.medium"
-      subnet_id     = aws_subnet.us-east-2a.id
+
+    dynamic "overrides" {
+      for_each = setproduct(var.worker_instance_types, aws_subnet.subnets)
+
+      content {
+        instance_type = overrides.value[0]
+        subnet_id = overrides.value[1].id
+      }
     }
-    overrides {
-      instance_type = "t3.medium"
-      subnet_id     = aws_subnet.us-east-2b.id
-    }
-    overrides {
-      instance_type = "t3.medium"
-      subnet_id     = aws_subnet.us-east-2c.id
-    }
-    overrides {
-      instance_type = "t3.large"
-      subnet_id     = aws_subnet.us-east-2a.id
-    }
-    overrides {
-      instance_type = "t3.large"
-      subnet_id     = aws_subnet.us-east-2b.id
-    }
-    overrides {
-      instance_type = "t3.large"
-      subnet_id     = aws_subnet.us-east-2c.id
-    }
-    overrides {
-      instance_type = "c5.large"
-      subnet_id     = aws_subnet.us-east-2a.id
-    }
-    overrides {
-      instance_type = "c5.large"
-      subnet_id     = aws_subnet.us-east-2b.id
-    }
-    overrides {
-      instance_type = "c5.large"
-      subnet_id     = aws_subnet.us-east-2c.id
-    }
+
+    # overrides {
+    #   instance_type = "t3.medium"
+    #   subnet_id     = aws_subnet.subnets[0].id
+    # }
+    # overrides {
+    #   instance_type = "t3.medium"
+    #   subnet_id     = aws_subnet.subnets[1].id
+    # }
+    # overrides {
+    #   instance_type = "t3.medium"
+    #   subnet_id     = aws_subnet.subnets[2].id
+    # }
+    # overrides {
+    #   instance_type = "t3.large"
+    #   subnet_id     = aws_subnet.subnets[0].id
+    # }
+    # overrides {
+    #   instance_type = "t3.large"
+    #   subnet_id     = aws_subnet.subnets[1].id
+    # }
+    # overrides {
+    #   instance_type = "t3.large"
+    #   subnet_id     = aws_subnet.subnets[2].id
+    # }
+    # overrides {
+    #   instance_type = "c5.large"
+    #   subnet_id     = aws_subnet.subnets[0].id
+    # }
+    # overrides {
+    #   instance_type = "c5.large"
+    #   subnet_id     = aws_subnet.subnets[1].id
+    # }
+    # overrides {
+    #   instance_type = "c5.large"
+    #   subnet_id     = aws_subnet.subnets[2].id
+    # }
   }
 
   tags = {

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-hostnamectl set-hostname ${manager_hostname}
+hostnamectl set-hostname ${composer_hostname}
 
 dnf -y install git python3-pip
 pip3 install ansible

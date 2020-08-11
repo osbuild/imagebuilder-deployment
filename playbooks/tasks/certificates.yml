@@ -1,32 +1,35 @@
 ---
 
+- name: Ensure /etc/osbuild-composer exists
+  file:
+    path: /etc/osbuild-composer
+    state: directory
+
 - name: Get CA certificate from S3
   aws_s3:
     mode: get
-    object: imagebuilder-deployment/ca-crt.pem
+    bucket: imagebuilder-deployment
+    object: ca-crt.pem
     dest: /etc/osbuild-composer/ca-crt.pem
 
 - name: Get CA key from S3
   aws_s3:
     mode: get
-    object: imagebuilder-deployment/ca-crt.key
+    bucket: imagebuilder-deployment
+    object: ca-crt.key
     dest: /tmp/ca-crt.key
-
-- name: Set fact for certificate and key filenames
-  set_fact:
-    tls_filename: "{{ node_type == 'manager' | ternary('composer', 'worker') }}"
 
 - name: Create private key
   openssl_privatekey:
-    path: "/etc/osbuild-composer/{{ tls_filename }}-key.pem"
+    path: "/etc/osbuild-composer/{{ node_type }}-key.pem"
     size: 4096
     owner: _osbuild-composer
   become: yes
 
 - name: Create CSR
   openssl_csr:
-    path: "/tmp/{{ tls_filename }}.csr"
-    privatekey_path: "/etc/osbuild-composer/{{ tls_filename }}-key.pem"
+    path: "/tmp/{{ node_type }}.csr"
+    privatekey_path: "/etc/osbuild-composer/{{ node_type }}-key.pem"
     digest: sha512
     subject:
       commonName: "{{ ansible_hostname }}"
@@ -35,9 +38,9 @@
 
 - name: Sign certificate
   openssl_certificate:
-    csr_path: "/tmp/{{ tls_filename }}.csr"
-    path: "/etc/osbuild-composer/{{ tls_filename }}-crt.pem"
-    privatekey_path: "/etc/osbuild-composer/{{ tls_filename }}-key.pem"
+    csr_path: "/tmp/{{ node_type }}.csr"
+    path: "/etc/osbuild-composer/{{ node_type }}-crt.pem"
+    privatekey_path: "/etc/osbuild-composer/{{ node_type }}-key.pem"
     ownca_path: /etc/osbuild-composer/ca-crt.pem
     ownca_privatekey_path: /tmp/ca-crt.key
     provider: ownca

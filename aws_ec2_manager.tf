@@ -1,37 +1,32 @@
-resource "aws_ebs_volume" "manager" {
+resource "aws_ebs_volume" "composer" {
   availability_zone = "us-east-2a"
   size              = 50
   type              = "standard"
 
   tags = {
-    Name = "imagebuilder.${var.deployment_name}.manager"
+    Name = "imagebuilder.${var.deployment_name}.composer"
   }
 }
 
-resource "aws_volume_attachment" "manager" {
+resource "aws_volume_attachment" "composer" {
   device_name = "/dev/sdb"
-  volume_id   = aws_ebs_volume.manager.id
-  instance_id = aws_instance.manager.id
+  volume_id   = aws_ebs_volume.composer.id
+  instance_id = aws_instance.composer.id
 }
 
-data "template_file" "manager_user_data" {
-  template = "${file("userdata/manager.tpl")}"
-
-  vars = {
-    manager_hostname = "manager.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
-  }
-}
-
-resource "aws_instance" "manager" {
+resource "aws_instance" "composer" {
   ami                  = data.aws_ami.rhel8-cloudaccess.id
   instance_type        = "t3.small"
   iam_instance_profile = "imagebuilder-instance-roles"
   key_name             = "personal_servers"
-  subnet_id            = aws_subnet.us-east-2a.id
+  subnet_id            = aws_subnet.subnets[0].id
   vpc_security_group_ids = [
-    aws_security_group.manager.id
+    aws_security_group.composer.id
   ]
-  user_data = base64encode(data.template_file.manager_user_data.rendered)
+  user_data = base64encode(data.template_file.composer_user_data.rendered)
+  lifecycle {
+    create_before_destroy = true
+  }
 
   root_block_device {
     volume_type           = "standard"
@@ -41,11 +36,11 @@ resource "aws_instance" "manager" {
   }
 
   tags = {
-    Name = "imagebuilder.${var.deployment_name}.manager"
+    Name = "imagebuilder.${var.deployment_name}.composer"
   }
 }
 
-resource "aws_eip" "manager" {
-  instance = aws_instance.manager.id
+resource "aws_eip" "composer" {
+  instance = aws_instance.composer.id
   vpc      = true
 }

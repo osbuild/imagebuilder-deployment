@@ -8,7 +8,7 @@ base_packages:
   - tmux
   - vim
 
-manager_packages:
+composer_packages:
   - cockpit
   - cockpit-composer
   - composer-cli

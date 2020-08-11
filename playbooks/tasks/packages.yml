@@ -12,16 +12,16 @@
     baseurl: "{{ osbuild_repo_baseurl }}"
     enabled: yes
     gpgcheck: no
-    priority: 5
+    priority: "5"
 
 - name: Install required packages
   dnf:
     name: "{{ base_packages }}"
     state: present
 
-- name: Install manager packages
+- name: Install composer packages
   dnf:
-    name: "{{ manager_packages }}"
+    name: "{{ composer_packages }}"
     state: present
   when:
-    - node_type == 'manager'
+    - node_type == 'composer'

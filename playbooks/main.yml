@@ -39,7 +39,7 @@
 
     - name: Set a fact for the type of node we are deploying
       set_fact:
-        node_type: "{{ ansible_hostname.startswith('manager') | ternary('manager', 'worker') }}"
+        node_type: "{{ ansible_hostname.startswith('composer') | ternary('composer', 'worker') }}"
 
     - name: Set timezone
       timezone:
@@ -49,6 +49,7 @@
     - name: Check if a swapfile already exists
       stat:
         path: /swapfile
+        get_checksum: no
       register: swapcheck
 
     - include_tasks: tasks/swapfile.yml
@@ -56,9 +57,10 @@
 
     - include_tasks: tasks/packages.yml
 
-    - include_tasks: tasks/manager_storage.yml
+    - include_tasks: tasks/composer_storage.yml
       when:
-        - node_type == 'manager'
+        - node_type == 'composer'
+        - "'/var/lib/osbuild-composer' not in ansible_mounts | map(attribute='mount') | list"
 
     - include_tasks: tasks/certificates.yml
 
@@ -68,35 +70,35 @@
         state: started
         enabled: yes
       loop:
-        - chrony
+        - chronyd
 
-    - name: Mask osbuild-worker on manager
+    - name: Mask osbuild-worker on composer
       systemd:
         name: osbuild-worker@1.service
         state: stopped
         masked: yes
       when:
-        - node_type == 'manager'
+        - node_type == 'composer'
 
-    - name: Start the remote worker listener on manager
+    - name: Start the remote worker listener on composer
       systemd:
         name: osbuild-remote-worker.socket
         state: started
         enabled: yes
       when:
-        - node_type == 'manager'
+        - node_type == 'composer'
 
-    - name: Start cockpit on manager
+    - name: Start cockpit on composer
       systemd:
         name: cockpit.socket
         state: started
         enabled: yes
       when:
-        - node_type == 'manager'
+        - node_type == 'composer'
 
     - name: Start worker
       systemd:
-        name: osbuild-remote-worker@{{ lookup('file', '/etc/osbuild-composer/manager_hostname') }}:8700
+        name: osbuild-remote-worker@{{ lookup('file', '/etc/osbuild-composer/composer_hostname') }}:8700
         state: started
         enabled: yes
       when:
