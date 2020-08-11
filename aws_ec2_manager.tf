@@ -24,6 +24,7 @@ resource "aws_instance" "composer" {
     aws_security_group.composer.id
   ]
   user_data = base64encode(data.template_file.composer_user_data.rendered)
+
   lifecycle {
     create_before_destroy = true
   }

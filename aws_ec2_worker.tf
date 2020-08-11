@@ -49,6 +49,10 @@ resource "aws_spot_fleet_request" "worker" {
   target_capacity                     = 1
   terminate_instances_with_expiration = true
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   launch_template_config {
     launch_template_specification {
       id      = aws_launch_template.worker.id
@@ -60,46 +64,9 @@ resource "aws_spot_fleet_request" "worker" {
 
       content {
         instance_type = overrides.value[0]
-        subnet_id = overrides.value[1].id
+        subnet_id     = overrides.value[1].id
       }
     }
-
-    # overrides {
-    #   instance_type = "t3.medium"
-    #   subnet_id     = aws_subnet.subnets[0].id
-    # }
-    # overrides {
-    #   instance_type = "t3.medium"
-    #   subnet_id     = aws_subnet.subnets[1].id
-    # }
-    # overrides {
-    #   instance_type = "t3.medium"
-    #   subnet_id     = aws_subnet.subnets[2].id
-    # }
-    # overrides {
-    #   instance_type = "t3.large"
-    #   subnet_id     = aws_subnet.subnets[0].id
-    # }
-    # overrides {
-    #   instance_type = "t3.large"
-    #   subnet_id     = aws_subnet.subnets[1].id
-    # }
-    # overrides {
-    #   instance_type = "t3.large"
-    #   subnet_id     = aws_subnet.subnets[2].id
-    # }
-    # overrides {
-    #   instance_type = "c5.large"
-    #   subnet_id     = aws_subnet.subnets[0].id
-    # }
-    # overrides {
-    #   instance_type = "c5.large"
-    #   subnet_id     = aws_subnet.subnets[1].id
-    # }
-    # overrides {
-    #   instance_type = "c5.large"
-    #   subnet_id     = aws_subnet.subnets[2].id
-    # }
   }
 
   tags = {

@@ -28,6 +28,6 @@ data "template_file" "worker_user_data" {
 
   vars = {
     composer_hostname = "composer.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
-    worker_hostname  = "worker.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
+    worker_hostname   = "worker.${var.deployment_name}.${var.aws_region}.imagebuilder.internal"
   }
 }
