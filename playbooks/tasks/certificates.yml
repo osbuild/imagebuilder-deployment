@@ -32,7 +32,7 @@
     privatekey_path: "/etc/osbuild-composer/{{ node_type }}-key.pem"
     digest: sha512
     subject:
-      commonName: "{{ ansible_fqdn }}"
+      commonName: "{{ ansible_nodename }}"
     owner: _osbuild-composer
     mode: "0600"
   become: yes

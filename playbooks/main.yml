@@ -46,12 +46,7 @@
 
     - name: Set a fact for the type of node we are deploying
       set_fact:
-        node_type: "{{ ansible_hostname.startswith('composer') | ternary('composer', 'worker') }}"
-
-    - name: Set timezone
-      timezone:
-        name: UTC
-        hwclock: UTC
+        node_type: "{{ ansible_nodename.startswith('composer') | ternary('composer', 'worker') }}"
 
     - include_tasks: tasks/packages.yml
 
