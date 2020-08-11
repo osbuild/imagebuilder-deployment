@@ -19,10 +19,6 @@ data "template_file" "composer_user_data" {
   }
 }
 
-# data "aws_subnet_ids" "subnets" {
-#   vpc_id = aws_vpc.main.id
-# }
-
 data "template_file" "worker_user_data" {
   template = "${file("userdata/worker.tpl")}"
 
