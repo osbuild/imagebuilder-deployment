@@ -25,3 +25,8 @@
     state: present
   when:
     - node_type == 'composer'
+
+- name: Install pip packages
+  pip:
+    name: "{{ pip_packages }}"
+    state: present
