@@ -29,8 +29,7 @@ resource "aws_instance" "manager" {
   key_name             = "personal_servers"
   subnet_id            = aws_subnet.us-east-2a.id
   vpc_security_group_ids = [
-    aws_security_group.manager.id,
-    "sg-0bff440d29aa6992b"
+    aws_security_group.manager.id
   ]
   user_data = base64encode(data.template_file.manager_user_data.rendered)
 

@@ -9,8 +9,7 @@ resource "aws_launch_template" "worker" {
   user_data = base64encode(data.template_file.worker_user_data.rendered)
 
   vpc_security_group_ids = [
-    aws_security_group.worker.id,
-    "sg-0bff440d29aa6992b"
+    aws_security_group.worker.id
   ]
 
   update_default_version = true

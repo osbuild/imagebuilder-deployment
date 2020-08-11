@@ -69,15 +69,26 @@ resource "aws_security_group" "manager" {
   // From: https://search.arin.net/rdap/?query=REDHAT-1
   ingress {
     description = "Ingress from Red Hat networks"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = [
       "8.43.84.0/22",
       "38.145.32.0/19",
       "64.56.207.232/29",
       "66.187.224.0/20",
       "209.132.176.0/20"
+    ]
+  }
+
+  // This obviously should be removed soon. 🤣
+  ingress {
+    description = "Ingress for Major"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [
+      "173.174.156.138/32"
     ]
   }
 
@@ -134,15 +145,26 @@ resource "aws_security_group" "worker" {
   // From: https://search.arin.net/rdap/?query=REDHAT-1
   ingress {
     description = "Ingress from Red Hat networks"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = [
       "8.43.84.0/22",
       "38.145.32.0/19",
       "64.56.207.232/29",
       "66.187.224.0/20",
       "209.132.176.0/20"
+    ]
+  }
+
+  // This obviously should be removed soon. 🤣
+  ingress {
+    description = "Ingress for Major"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [
+      "173.174.156.138/32"
     ]
   }
 
