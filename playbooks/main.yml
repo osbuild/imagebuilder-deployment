@@ -48,11 +48,6 @@
       set_fact:
         node_type: "{{ ansible_hostname.startswith('composer') | ternary('composer', 'worker') }}"
 
-    - name: Set timezone
-      timezone:
-        name: UTC
-        hwclock: UTC
-
     - include_tasks: tasks/packages.yml
 
     - include_tasks: tasks/composer_storage.yml
