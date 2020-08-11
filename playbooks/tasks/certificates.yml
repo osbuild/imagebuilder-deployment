@@ -34,6 +34,7 @@
     subject:
       commonName: "{{ ansible_hostname }}"
     owner: _osbuild-composer
+    mode: "0600"
   become: yes
 
 - name: Sign certificate
@@ -45,6 +46,7 @@
     ownca_privatekey_path: /tmp/ca-crt.key
     provider: ownca
     owner: _osbuild-composer
+    mode: "0600"
   become: yes
 
 - name: Remove the CA key
