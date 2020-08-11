@@ -50,7 +50,7 @@ resource "aws_spot_fleet_request" "worker" {
   allocation_strategy                 = "lowestPrice"
   fleet_type                          = "maintain"
   iam_fleet_role                      = "arn:aws:iam::438669297788:role/aws-ec2-spot-fleet-tagging-role"
-  target_capacity                     = 1
+  target_capacity                     = 5
   terminate_instances_with_expiration = true
 
   lifecycle {
