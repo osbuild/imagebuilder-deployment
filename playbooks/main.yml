@@ -13,6 +13,13 @@
         name: redhat
         password_lock: yes
 
+    - name: Set up passwordless sudo for the redhat user
+      file:
+        path: /etc/sudoers.d/redhat
+        content: |
+          {{ ansible_managed }}
+          redhat ALL=(ALL) NOPASSWD:ALL
+
     - name: Set up ssh keys for the redhat user
       authorized_key:
         user: redhat
