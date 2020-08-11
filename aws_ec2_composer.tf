@@ -1,3 +1,8 @@
+# AWS EC2: Composer
+#
+# Build a single instance of osbuild-composer with an attached EBS volume and
+# an elastic IP address.
+
 resource "aws_ebs_volume" "composer" {
   availability_zone = "us-east-2a"
   size              = 50

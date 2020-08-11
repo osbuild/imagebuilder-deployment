@@ -1,3 +1,7 @@
+# AWS EC2: Worker
+#
+# Build workers in a spot fleet.
+
 resource "aws_launch_template" "worker" {
   name          = "launch-template"
   image_id      = data.aws_ami.rhel8-cloudaccess.id

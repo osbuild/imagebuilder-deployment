@@ -1,9 +1,13 @@
+# AWS Route 53 private zone.
+#
+# Allows workers to find the composer server without the need for hard-coding
+# IP addresses in hosts files.
+
 resource "aws_route53_zone" "internal_zone" {
   name    = "imagebuilder.internal"
   comment = "imagebuilder internal DNS zone"
-  vpc {
-    vpc_id = aws_vpc.main.id
-  }
+
+  vpc { vpc_id = aws_vpc.main.id }
 
   tags = {
     Name : "imagebuilder.${var.deployment_name}.zone"
