@@ -51,7 +51,7 @@
         path: /swapfile
         get_attributes: no
         get_checksum: no
-        get_mime: no`
+        get_mime: no
       register: swapcheck
 
     - include_tasks: tasks/swapfile.yml
