@@ -2,8 +2,10 @@
 
 - hosts: all
   become: yes
+  vars:
+    ansible_connection: local
   vars_files:
-    - playbooks/vars.yml
+    - vars.yml
   tasks:
 
     - name: Create redhat user
@@ -49,16 +51,16 @@
         path: /swapfile
       register: swapcheck
 
-    - include_tasks: playbooks/tasks/swapfile.yml
+    - include_tasks: tasks/swapfile.yml
       when: not swapcheck.stat.exists
 
-    - include_tasks: playbooks/tasks/packages.yml
+    - include_tasks: tasks/packages.yml
 
-    - include_tasks: playbooks/tasks/manager_storage.yml
+    - include_tasks: tasks/manager_storage.yml
       when:
         - node_type == 'manager'
 
-    - include_tasks: playbooks/tasks/certificates.yml
+    - include_tasks: tasks/certificates.yml
 
     - name: Ensure base services are running
       systemd:
