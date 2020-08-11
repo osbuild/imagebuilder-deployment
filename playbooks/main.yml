@@ -17,7 +17,7 @@
       file:
         path: /etc/sudoers.d/redhat
         content: |
-          {{ ansible_managed }}
+          # Managed by Ansible
           redhat ALL=(ALL) NOPASSWD:ALL
 
     - name: Set up ssh keys for the redhat user
