@@ -36,7 +36,7 @@ resource "aws_instance" "composer" {
 
   root_block_device {
     volume_type           = "standard"
-    volume_size           = 20
+    volume_size           = 50
     delete_on_termination = true
     encrypted             = false
   }
