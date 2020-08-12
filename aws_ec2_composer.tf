@@ -5,7 +5,7 @@
 
 resource "aws_ebs_volume" "composer" {
   availability_zone = "us-east-2a"
-  size              = 50
+  size              = 500
   type              = "standard"
 
   tags = {
