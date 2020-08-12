@@ -57,6 +57,16 @@
         - node_type == 'composer'
         - "'/var/lib/osbuild-composer' not in ansible_mounts | map(attribute='mount') | list"
 
+    - name: Make directory for osbuild-composer repository overrides
+      file:
+        path: /etc/osbuild-composer/repositories
+        state: directory
+
+    - name: Download RHEL 8.2 repository override for osbuild-composer
+      get_url:
+        url: https://raw.githubusercontent.com/osbuild/osbuild-composer/master/test/external-repos/rhel-8.json
+        dest: /etc/osbuild-composer/repositories/rhel-8.json
+
     - name: Ensure base services are running
       systemd:
         name: "{{ item }}"
