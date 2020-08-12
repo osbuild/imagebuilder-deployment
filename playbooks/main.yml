@@ -50,11 +50,6 @@
 
     - include_tasks: tasks/packages.yml
 
-    - name: Update Ansible facts after user creation during package install
-      setup:
-        gather_subset:
-          - all
-
     - include_tasks: tasks/certificates.yml
 
     - include_tasks: tasks/composer_storage.yml
