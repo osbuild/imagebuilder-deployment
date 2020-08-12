@@ -7,8 +7,9 @@ subscription-manager register --auto-attach \
   --username="${rhn_registration_username}" \
   --password="${rhn_registration_password}"
 
-dnf -y install git python3-pip
-pip3 install ansible
+subscription-manager repos --enable=ansible-2.9-for-rhel-8-x86_64-rpms
+
+dnf -y install ansible git python3-pip
 
 ansible-pull \
   --inventory localhost, \
