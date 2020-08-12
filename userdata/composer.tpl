@@ -19,3 +19,9 @@ ansible-pull \
   --checkout main \
   --module-name git \
   playbooks/main.yml
+
+# Apply lorax patch to work around pytoml issues in RHEL 8.x.
+# See BZ 1843704 or https://github.com/weldr/lorax/pull/1030 for more details.
+sudo sed -r -i 's#toml.load\(args\[3\]\)#toml.load(open(args[3]))#' \
+    /usr/lib/python3.6/site-packages/composer/cli/compose.py
+sudo rm -f /usr/lib/python3.6/site-packages/composer/cli/compose.pyc
