@@ -27,6 +27,16 @@
     opts: defaults
     state: mounted
 
+- name: Ensure SELinux contexts are set
+  command: restorecon -Rv /var/lib/
+
+- name: Set permissions on the mounted volume
+  file:
+    path: /var/lib/osbuild-composer
+    owner: _osbuild_composer
+    group: _osbuild_composer
+    state: directory
+
 - name: Verify that the storage is writable
   file:
     path: /var/lib/osbuild-composer/.ansible_check

@@ -9,6 +9,8 @@ subscription-manager register --auto-attach \
 
 subscription-manager repos --enable=ansible-2.9-for-rhel-8-x86_64-rpms
 
+rm -rf /var/lob/rhsm/rhsm.log
+
 dnf -y install ansible git python3-pip
 
 ansible-pull \

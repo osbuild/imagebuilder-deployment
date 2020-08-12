@@ -50,12 +50,12 @@
 
     - include_tasks: tasks/packages.yml
 
+    - include_tasks: tasks/certificates.yml
+
     - include_tasks: tasks/composer_storage.yml
       when:
         - node_type == 'composer'
         - "'/var/lib/osbuild-composer' not in ansible_mounts | map(attribute='mount') | list"
-
-    - include_tasks: tasks/certificates.yml
 
     - name: Ensure base services are running
       systemd:
