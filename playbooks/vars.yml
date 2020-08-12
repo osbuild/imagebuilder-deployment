@@ -9,8 +9,6 @@ base_packages:
   - vim
 
 composer_packages:
-  - cockpit
-  - cockpit-composer
   - composer-cli
 
 pip_packages:

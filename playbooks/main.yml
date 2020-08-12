@@ -81,14 +81,6 @@
       when:
         - node_type == 'composer'
 
-    - name: Start cockpit on composer
-      systemd:
-        name: cockpit.socket
-        state: started
-        enabled: yes
-      when:
-        - node_type == 'composer'
-
     - name: Start worker
       systemd:
         name: osbuild-remote-worker@{{ lookup('file', '/etc/osbuild-composer/composer_hostname') }}:8700
