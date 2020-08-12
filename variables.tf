@@ -18,3 +18,11 @@ variable "worker_instance_types" {
     "c5a.large"
   ]
 }
+
+variable "RHN_REGISTRATION_USERNAME" {
+  description = "RHN Registration username"
+}
+
+variable "RHN_REGISTRATION_PASSWORD" {
+  description = "RHN Registration password"
+}

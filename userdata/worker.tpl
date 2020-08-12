@@ -3,6 +3,10 @@ set -euxo pipefail
 
 hostnamectl set-hostname ${worker_hostname}
 
+subscription-manager register --auto-attach \
+  --username="${rhn_registration_username}" \
+  --password="${rhn_registration_password}"
+
 mkdir -p /etc/osbuild-composer
 echo ${composer_hostname} | tee /etc/osbuild-composer/composer_hostname
 
