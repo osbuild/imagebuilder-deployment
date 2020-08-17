@@ -21,7 +21,7 @@ resource "aws_volume_attachment" "composer" {
 
 resource "aws_instance" "composer" {
   ami                  = data.aws_ami.rhel8-cloudaccess.id
-  instance_type        = "t3.small"
+  instance_type        = "c5.large"
   iam_instance_profile = "imagebuilder-instance-roles"
   key_name             = "personal_servers"
   subnet_id            = aws_subnet.subnets[0].id

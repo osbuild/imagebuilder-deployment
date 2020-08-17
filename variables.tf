@@ -11,11 +11,12 @@ variable "aws_region" {
 variable "worker_instance_types" {
   description = "Instance types for workers"
   default = [
-    "t3.medium",
-    "t3.large",
     "c5.large",
     "c5d.large",
-    "c5a.large"
+    "c5a.large",
+    "c5.xlarge",
+    "c5d.xlarge",
+    "c5a.xlarge"
   ]
 }
 
