@@ -93,7 +93,7 @@
 
     - name: Start worker
       systemd:
-        name: osbuild-remote-worker@{{ lookup('file', '/etc/osbuild-composer/composer_hostname') }}:8700
+        name: osbuild-worker@{{ lookup('file', '/etc/osbuild-composer/composer_hostname') }}:8700
         state: started
         enabled: yes
       when:
