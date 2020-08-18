@@ -83,6 +83,15 @@
       when:
         - node_type == 'composer'
 
+    - name: Apply issue 924 workaround
+      ini_file:
+        path: "/usr/lib/systemd/system/osbuild-remote-worker@.service"
+        section: Install
+        option: WantedBy
+        value: multi-user.target
+      when:
+        - node_type == 'worker'
+
     - name: Start the remote worker listener on composer
       systemd:
         name: osbuild-remote-worker.socket
@@ -91,11 +100,12 @@
       when:
         - node_type == 'composer'
 
-    - name: Start worker
+    - name: Start remote worker
       systemd:
         name: osbuild-remote-worker@{{ lookup('file', '/etc/osbuild-composer/composer_hostname') }}:8700.service
         state: started
         enabled: yes
+        daemon_reload: yes  # 🐛 Remove when issue 924 is fixed!
       when:
         - node_type == 'worker'
 
