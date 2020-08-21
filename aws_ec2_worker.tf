@@ -22,7 +22,7 @@ resource "aws_launch_template" "worker" {
     device_name = "/dev/sda1"
     ebs {
       volume_size = 50
-      volume_type = "standard"
+      volume_type = "gp2"
     }
   }
 
@@ -63,12 +63,26 @@ resource "aws_spot_fleet_request" "worker" {
       version = aws_launch_template.worker.latest_version
     }
 
+    # NOTE(mhayden): Using multiple subnets causes some high data transfer
+    # costs until we find a way to disable image uploads to composer:
+    # https://github.com/osbuild/osbuild-composer/issues/920
+    #
+    # dynamic "overrides" {
+    #   for_each = setproduct(var.worker_instance_types, aws_subnet.subnets)
+
+    #   content {
+    #     instance_type = overrides.value[0]
+    #     subnet_id     = overrides.value[1].id
+    #   }
+    # }
+
     dynamic "overrides" {
-      for_each = setproduct(var.worker_instance_types, aws_subnet.subnets)
+      for_each = var.worker_instance_types
 
       content {
-        instance_type = overrides.value[0]
-        subnet_id     = overrides.value[1].id
+        instance_type = overrides.value
+        # Keep workers + composer in the same subnet to save money.
+        subnet_id = aws_instance.composer.subnet_id
       }
     }
   }

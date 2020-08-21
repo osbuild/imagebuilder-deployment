@@ -21,7 +21,7 @@ resource "aws_volume_attachment" "composer" {
 
 resource "aws_instance" "composer" {
   ami                  = data.aws_ami.rhel8-cloudaccess.id
-  instance_type        = "c5.large"
+  instance_type        = "t3a.medium"
   iam_instance_profile = "imagebuilder-instance-roles"
   key_name             = "personal_servers"
   subnet_id            = aws_subnet.subnets[0].id
@@ -35,7 +35,7 @@ resource "aws_instance" "composer" {
   }
 
   root_block_device {
-    volume_type           = "standard"
+    volume_type           = "gp2"
     volume_size           = 50
     delete_on_termination = true
     encrypted             = false
