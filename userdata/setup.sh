@@ -103,7 +103,7 @@ if is_composer && ! grep ${STATE_DIR} /proc/mounts; then
   mount $EBS_STORAGE
 
   # Reset SELinux contexts.
-  resotrecon -Rv /var/lib
+  restorecon -Rv /var/lib
 
   # Set filesystem permissions.
   chown -R _osbuild-composer:_osbuild-composer ${STATE_DIR}
