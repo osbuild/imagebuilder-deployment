@@ -1,5 +1,5 @@
 function is_composer {
-  if [[ $$NODE_TYPE == composer ]]; then
+  if [[ $NODE_TYPE == composer ]]; then
     return 0
   fi
   return 1
@@ -10,14 +10,14 @@ EBS_STORAGE=/dev/nvme1n1
 STATE_DIR=/var/lib/osbuild-composer
 
 # Set the hostname to the hostname passed by terraform.
-hostnamectl set-hostname $$SYSTEM_HOSTNAME
+hostnamectl set-hostname $SYSTEM_HOSTNAME
 
 # If we're on a worker, we need to add the instance ID to the hostname for
 # easier identification.
 if ! is_composer; then
-  INSTANCE_ID=$$(curl --retry 5 --location --silent http://169.254.169.254/latest/meta-data/instance-id)
-  WORKER_HOSTNAME=$$(echo $$SYSTEM_HOSTNAME | sed "s/^worker/worker-$${INSTANCE_ID}/")
-  hostnamectl set-hostname $$WORKER_HOSTNAME
+  INSTANCE_ID=$(curl --retry 5 --location --silent http://169.254.169.254/latest/meta-data/instance-id)
+  WORKER_HOSTNAME=$(echo $SYSTEM_HOSTNAME | sed "s/^worker/worker-${INSTANCE_ID}/")
+  hostnamectl set-hostname $WORKER_HOSTNAME
 fi
 
 # Create a user.
@@ -64,52 +64,52 @@ dnf -y --enablerepo=epel certbot python3-certbot python3-certbot-dns-route53
 
 # Get certificates from LetsEncrypt.
 certbot certonly --dns-route53 -m major@redhat.com --agree-tos \
-  --non-interactive -d $$(hostname)
+  --non-interactive -d $(hostname)
 
 # Create symbolic links to the certs for osbuild-composer to use.
-CERTS_DIR=/etc/letsencrypt/live/$$(hostname)
+CERTS_DIR=/etc/letsencrypt/live/$(hostname)
 COMPOSER_DIR=/etc/osbuild-composer/
-mkdir -p $$COMPOSER_DIR
-ln -s $${CERTS_DIR}/fullchain.pem $${COMPOSER_DIR}/ca-crt.pem
+mkdir -p $COMPOSER_DIR
+ln -s ${CERTS_DIR}/fullchain.pem ${COMPOSER_DIR}/ca-crt.pem
 if is_composer; then
-  ln -sf $${CERTS_DIR}/cert.pem $${COMPOSER_DIR}/composer-crt.pem
-  ln -sf $${CERTS_DIR}/privkey.pem $${COMPOSER_DIR}/composer-key.pem
+  ln -sf ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/composer-crt.pem
+  ln -sf ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/composer-key.pem
 else
-  ln -sf $${CERTS_DIR}/cert.pem $${COMPOSER_DIR}/worker-crt.pem
-  ln -sf $${CERTS_DIR}/privkey.pem $${COMPOSER_DIR}/worker-key.pem
+  ln -sf ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/worker-crt.pem
+  ln -sf ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/worker-key.pem
 fi
 
 # Set up storage on composer.
-if is_composer && ! grep $${STATE_DIR} /proc/mounts; then
+if is_composer && ! grep ${STATE_DIR} /proc/mounts; then
   # Ensure EBS is fully connected first.
   for TIMER in {0..300}; do
-    if stat $$EBS_STORAGE; then
+    if stat $EBS_STORAGE; then
       break
     fi
     sleep 1
   done
 
   # Check if XFS filesystem is already made.
-  if ! xfs_info $$EBS_STORAGE; then
-    mkfs.xfs $$EBS_STORAGE
+  if ! xfs_info $EBS_STORAGE; then
+    mkfs.xfs $EBS_STORAGE
   fi
 
   # Make osbuild-composer state directory if missing.
-  mkdir -p $${STATE_DIR}
+  mkdir -p ${STATE_DIR}
 
   # Add to /etc/fstab and mount.
-  echo "$${EBS_STORAGE} $${STATE_DIR} xfs defaults 0 0" | tee -a /etc/fstab
-  mount $$EBS_STORAGE
+  echo "${EBS_STORAGE} ${STATE_DIR} xfs defaults 0 0" | tee -a /etc/fstab
+  mount $EBS_STORAGE
 
   # Reset SELinux contexts.
   resotrecon -Rv /var/lib
 
   # Set filesystem permissions.
-  chown -R _osbuild-composer:_osbuild-composer $${STATE_DIR}
+  chown -R _osbuild-composer:_osbuild-composer ${STATE_DIR}
 
   # Verify that the storage is writable
-  touch $${STATE_DIR}/.provisioning_check
-  rm -f $${STATE_DIR}/.provisioning_check
+  touch ${STATE_DIR}/.provisioning_check
+  rm -f ${STATE_DIR}/.provisioning_check
 fi
 
 # Add repository overrides for RHEL 8.2
@@ -120,8 +120,8 @@ curl --retry 5 --location --silent \
 
 # Register to RHN.
 subscription-manager register --auto-attach \
-  --username="$${RHN_USERNAME}" \
-  --password="$${RHN_PASSWORD}"
+  --username="${RHN_USERNAME}" \
+  --password="${RHN_PASSWORD}"
 
 # Prepare all osbuild-composer services.
 if is_composer; then
@@ -129,7 +129,7 @@ if is_composer; then
   systemctl mask osbuild-worker@1.service
   systemctl enable --now osbuild-remote-worker.socket
 else
-  systemctl enable --now osbuild-remote-worker@$${COMPOSER_HOSTNAME}:8700.service
+  systemctl enable --now osbuild-remote-worker@${COMPOSER_HOSTNAME}:8700.service
 fi
 
 # Apply lorax patch to work around pytoml issues in RHEL 8.x.
