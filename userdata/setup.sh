@@ -71,14 +71,15 @@ certbot certonly --dns-route53 -m major@redhat.com --agree-tos --staging \
 CERTS_DIR=/etc/letsencrypt/live/$(hostname)
 COMPOSER_DIR=/etc/osbuild-composer/
 mkdir -p $COMPOSER_DIR
-ln -s ${CERTS_DIR}/fullchain.pem ${COMPOSER_DIR}/ca-crt.pem
 if is_composer; then
-  ln -sf ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/composer-crt.pem
-  ln -sf ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/composer-key.pem
+  cp -afv ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/composer-crt.pem
+  cp -afv ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/composer-key.pem
 else
-  ln -sf ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/worker-crt.pem
-  ln -sf ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/worker-key.pem
+  cp -afv ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/worker-crt.pem
+  cp -afv ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/worker-key.pem
 fi
+cp -afv ${CERTS_DIR}/fullchain.pem ${COMPOSER_DIR}/ca-crt.pem
+chown -R _osbuild-composer:_osbuild-composer $COMPOSER_DIR
 
 # Set up storage on composer.
 if is_composer && ! grep ${STATE_DIR} /proc/mounts; then
@@ -112,12 +113,6 @@ if is_composer && ! grep ${STATE_DIR} /proc/mounts; then
   touch ${STATE_DIR}/.provisioning_check
   rm -f ${STATE_DIR}/.provisioning_check
 fi
-
-# Add repository overrides for RHEL 8.2
-mkdir -p /etc/osbuild-composer/repositories
-curl --retry 5 --location --silent \
-  --output /etc/osbuild-composer/repositories/rhel-8.json \
-  https://raw.githubusercontent.com/osbuild/osbuild-composer/master/test/external-repos/rhel-8.json
 
 # Register to RHN.
 subscription-manager register --auto-attach \
