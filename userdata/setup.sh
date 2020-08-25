@@ -60,10 +60,11 @@ dnf -y install chrony composer-cli dnf-plugins-core \
 systemctl enable --now chronyd
 
 # Install certbot packages on composer.
-dnf -y --enablerepo=epel certbot python3-certbot python3-certbot-dns-route53
+dnf -y --enablerepo=epel install \
+  certbot python3-certbot python3-certbot-dns-route53
 
 # Get certificates from LetsEncrypt.
-certbot certonly --dns-route53 -m major@redhat.com --agree-tos \
+certbot certonly --dns-route53 -m major@redhat.com --agree-tos --staging \
   --non-interactive -d $(hostname)
 
 # Create symbolic links to the certs for osbuild-composer to use.
