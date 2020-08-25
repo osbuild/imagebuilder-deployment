@@ -17,7 +17,7 @@ data "aws_availability_zones" "available" {
 }
 
 data "template_file" "composer_user_data" {
-  template = "${file("userdata/set_variables.tpl")}"
+  template = "${file("userdata/set_variables.template")}"
 
   vars = {
     node_type         = "composer"
@@ -30,12 +30,12 @@ data "template_file" "composer_user_data" {
     # 💣 Split off most of the setup script to avoid shenanigans with
     # Terraform's template interpretation that destroys Bash variables.
     # https://github.com/hashicorp/terraform/issues/15933
-    setup_script = "${file("userdata/set_variables.tpl")}"
+    setup_script = "${file("userdata/setup.sh")}"
   }
 }
 
 data "template_file" "worker_user_data" {
-  template = "${file("userdata/set_variables.tpl")}"
+  template = "${file("userdata/set_variables.template")}"
 
   vars = {
     node_type         = "worker"
@@ -48,6 +48,6 @@ data "template_file" "worker_user_data" {
     # 💣 Split off most of the setup script to avoid shenanigans with
     # Terraform's template interpretation that destroys Bash variables.
     # https://github.com/hashicorp/terraform/issues/15933
-    setup_script = "${file("userdata/set_variables.tpl")}"
+    setup_script = "${file("userdata/setup.sh")}"
   }
 }
