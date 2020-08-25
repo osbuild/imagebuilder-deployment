@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euxo pipefail
+
+# Variables from Terraform
+NODE_TYPE=${node_type}
+COMPOSER_HOSTNAME=${composer_hostname}
+SYSTEM_HOSTNAME=${node_hostname}
+RHN_USERNAME=${rhn_registration_username}
+RHN_PASSWORD=${rhn_registration_password}
+
+${setup_script}

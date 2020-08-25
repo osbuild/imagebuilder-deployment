@@ -17,7 +17,7 @@ data "aws_availability_zones" "available" {
 }
 
 data "template_file" "composer_user_data" {
-  template = "${file("userdata/user_data.tpl")}"
+  template = "${file("userdata/set_variables.tpl")}"
 
   vars = {
     node_type         = "composer"
@@ -26,11 +26,16 @@ data "template_file" "composer_user_data" {
 
     rhn_registration_username = var.RHN_REGISTRATION_USERNAME
     rhn_registration_password = var.RHN_REGISTRATION_PASSWORD
+
+    # 💣 Split off most of the setup script to avoid shenanigans with
+    # Terraform's template interpretation that destroys Bash variables.
+    # https://github.com/hashicorp/terraform/issues/15933
+    setup_script = "${file("userdata/set_variables.tpl")}"
   }
 }
 
 data "template_file" "worker_user_data" {
-  template = "${file("userdata/user_data.tpl")}"
+  template = "${file("userdata/set_variables.tpl")}"
 
   vars = {
     node_type         = "worker"
@@ -39,5 +44,10 @@ data "template_file" "worker_user_data" {
 
     rhn_registration_username = var.RHN_REGISTRATION_USERNAME
     rhn_registration_password = var.RHN_REGISTRATION_PASSWORD
+
+    # 💣 Split off most of the setup script to avoid shenanigans with
+    # Terraform's template interpretation that destroys Bash variables.
+    # https://github.com/hashicorp/terraform/issues/15933
+    setup_script = "${file("userdata/set_variables.tpl")}"
   }
 }

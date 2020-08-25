@@ -1,19 +1,9 @@
-#!/bin/bash
-set -euxo pipefail
-
 function is_composer {
   if [[ $$NODE_TYPE == composer ]]; then
     return 0
   fi
   return 1
 }
-
-# Variables from Terraform
-NODE_TYPE=${node_type}
-COMPOSER_HOSTNAME=${composer_hostname}
-SYSTEM_HOSTNAME=${node_hostname}
-RHN_USERNAME=${rhn_registration_username}
-RHN_PASSWORD=${rhn_registration_password}
 
 # Variables for the script.
 EBS_STORAGE=/dev/nvme1n1
