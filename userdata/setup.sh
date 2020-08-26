@@ -41,7 +41,7 @@ curl --retry 5 --location --silent \
   --output /tmp/epel.rpm \
   https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 rpm -Uvh /tmp/epel.rpm
-sed 's/^enabled.*/enabled=0/' /etc/yum.repos.d/epel.repo
+sed -i 's/^enabled.*/enabled=0/' /etc/yum.repos.d/epel.repo
 
 # Deploy the osbuild repository.
 tee /etc/yum.repos.d/osbuild.repo << EOF
