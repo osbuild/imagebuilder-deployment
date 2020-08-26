@@ -7,7 +7,7 @@ data "aws_ami" "rhel8-cloudaccess" {
   }
 }
 
-data "aws_route53_zone" "buildinfra" {
+data "aws_route53_zone" "builderinfra" {
   zone_id      = "Z032738211ODOXQOKZZWK"
   private_zone = true
 }
