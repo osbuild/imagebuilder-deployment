@@ -32,6 +32,7 @@ curl --retry 5 --location --silent \
 chown -R redhat:redhat /home/redhat/.ssh
 chmod 0700 /home/redhat/.ssh
 chmod 0600 /home/redhat/.ssh/authorized_keys
+echo "redhat ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/50-redhat
 
 # Install EPEL but disable the repository.
 echo "fastestmirror=1" | tee -a /etc/dnf/dnf.conf
@@ -69,16 +70,16 @@ certbot certonly --dns-route53 -m major@redhat.com --agree-tos --staging \
 
 # Create symbolic links to the certs for osbuild-composer to use.
 CERTS_DIR=/etc/letsencrypt/live/$(hostname)
-COMPOSER_DIR=/etc/osbuild-composer/
+COMPOSER_DIR=/etc/osbuild-composer
 mkdir -p $COMPOSER_DIR
 if is_composer; then
-  cp -afv ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/composer-crt.pem
-  cp -afv ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/composer-key.pem
+  cp -afv $(readlink -f ${CERTS_DIR}/cert.pem) ${COMPOSER_DIR}/composer-crt.pem
+  cp -afv $(readlink -f ${CERTS_DIR}/privkey.pem) ${COMPOSER_DIR}/composer-key.pem
 else
-  cp -afv ${CERTS_DIR}/cert.pem ${COMPOSER_DIR}/worker-crt.pem
-  cp -afv ${CERTS_DIR}/privkey.pem ${COMPOSER_DIR}/worker-key.pem
+  cp -afv $(readlink -f ${CERTS_DIR}/cert.pem) ${COMPOSER_DIR}/worker-crt.pem
+  cp -afv $(readlink -f ${CERTS_DIR}/privkey.pem) ${COMPOSER_DIR}/worker-key.pem
 fi
-cp -afv ${CERTS_DIR}/fullchain.pem ${COMPOSER_DIR}/ca-crt.pem
+cp -afv $(readlink -f ${CERTS_DIR}/fullchain.pem) ${COMPOSER_DIR}/ca-crt.pem
 chown -R _osbuild-composer:_osbuild-composer $COMPOSER_DIR
 
 # Set up storage on composer.
@@ -118,6 +119,17 @@ fi
 subscription-manager register --auto-attach \
   --username="${RHN_USERNAME}" \
   --password="${RHN_PASSWORD}"
+
+# Enable access logging for osbuild-composer.
+if is_composer; then
+  mkdir /etc/systemd/system/osbuild-composer.service.d/
+  tee /etc/systemd/system/osbuild-composer.service.d/override.conf << EOF
+[Service]
+ExecStart=
+ExecStart=/usr/libexec/osbuild-composer/osbuild-composer -v
+EOF
+  systemctl daemon-reload
+fi
 
 # Prepare all osbuild-composer services.
 if is_composer; then
