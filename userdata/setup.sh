@@ -28,7 +28,7 @@ passwd -l redhat
 mkdir /home/redhat/.ssh
 curl --retry 5 --location --silent \
   --output /home/redhat/.ssh/authorized_keys \
-  https://github.com/osbuild/osbuild-composer/blob/master/schutzbot/team_ssh_keys.txt
+  https://raw.githubusercontent.com/osbuild/osbuild-composer/master/schutzbot/team_ssh_keys.txt
 chown -R redhat:redhat /home/redhat/.ssh
 chmod 0700 /home/redhat/.ssh
 chmod 0600 /home/redhat/.ssh/authorized_keys
